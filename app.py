@@ -14,7 +14,7 @@ USERS_FILE = os.path.join(DATA_DIR, "users.json")
 TOPICS_FILE = os.path.join(DATA_DIR, "topics.json")
 
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "1234" # عوضش کن
+ADMIN_PASSWORD = "022025" 
 
 
 def load_json(path):
