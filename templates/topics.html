@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="text-align:center;">سلام {{ display_name }} 👋</h2>
+<p style="text-align:center; color:#6b7280;">حداقل ۱ و حداکثر ۲ سرفصل می‌توانید انتخاب کنید.</p>
+
+{% if error %}
+    <div class="error" style="text-align:center;">{{ error }}</div>
+{% endif %}
+{% if success %}
+    <div class="success" style="text-align:center;">{{ success }}</div>
+{% endif %}
+
+<form method="post">
+    <div class="topics-list">
+        {% for topic in topics %}
+            {% set is_mine = (topic.chosen_by == username) %}
+            {% if topic.chosen_by and not is_mine %}
+                <div class="topic-row topic-taken">
+                    <input type="checkbox" disabled>
+                    <span>{{ topic.id }}. {{ topic.title }} (گرفته‌شده)</span>
+                </div>
+            {% else %}
+                <div class="topic-row topic-free">
+                    <input
+                        type="checkbox"
+                        name="topics"
+                        value="{{ topic.id }}"
+                        {% if is_mine %}checked{% endif %}>
+                    <span>
+                        {{ topic.id }}. {{ topic.title }}
+                        {% if is_mine %}
+                            <span class="badge">انتخاب شما</span>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="footer-actions" style="justify-content:center;">
+        <button type="submit">ثبت انتخاب‌ها</button>
+        <a href="{{ url_for('logout') }}" class="btn" style="background:#6b7280;">خروج</a>
+    </div>
+</form>
+{% endblock %}

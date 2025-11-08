@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>داشبورد ادمین</h2>
+<p>خلاصه انتخاب سرفصل‌ها.</p>
+
+<div class="footer-actions">
+    <a href="{{ url_for('admin_export_csv') }}" class="btn">📥 دانلود CSV</a>
+    <button class="btn" style="background:#10b981;" onclick="window.print()">🖨️ چاپ / PDF</button>
+    <a href="{{ url_for('admin_logout') }}" class="btn" style="background:#6b7280;">خروج ادمین</a>
+</div>
+
+<h3>بر اساس شرکت‌کننده‌ها</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>نام</th>
+            <th>سرفصل‌های انتخاب‌شده</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in by_user %}
+            <tr>
+                <td>{{ row.name }}</td>
+                <td>{{ row.topics or "—" }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>بر اساس سرفصل‌ها</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ردیف</th>
+            <th>سرفصل</th>
+            <th>انتخاب‌شده توسط</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in topics %}
+            <tr>
+                <td>{{ t.id }}</td>
+                <td>{{ t.title }}</td>
+                <td>{{ t.chosen_by or "آزاد" }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title or "Topic Picker" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="wrapper">
+    {% block content %}{% endblock %}
+</div>
+<img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" class="logo-fixed">
+</body>
+</html>

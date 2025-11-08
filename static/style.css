@@ -1,0 +1,262 @@
+/* 🌐 Font setup: Persian = Vazirmatn, English = Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap');
+
+* {
+    font-family: 'Vazirmatn', 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+    min-height: 100vh;
+    color: #111827;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    /* پس‌زمینه گرادینت آبی/بنفش */
+    background: linear-gradient(135deg, #1d4ed8, #4f46e5, #9333ea);
+    position: relative;
+    overflow-x: hidden;
+}
+
+
+/* کادر اصلی صفحات */
+.wrapper {
+    max-width: 900px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 24px 28px;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.30);
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(6px);
+}
+
+/* تیترها و متن */
+h1, h2, h3 {
+    margin-top: 0;
+    color: #111827;
+    line-height: 1.5;
+}
+
+p {
+    color: #4b5563;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* فرم‌ها */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #111827;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    margin-bottom: 14px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background-color: #f9fafb;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+    background-color: #ffffff;
+}
+
+/* دکمه‌ها */
+button,
+.btn {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+}
+
+button:hover,
+.btn:hover {
+    background: linear-gradient(90deg, #1d4ed8, #6d28d9);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(79, 70, 229, 0.45);
+}
+
+/* نسخه خاکستری (مثلاً خروج) */
+.btn-secondary {
+    background: #6b7280;
+    box-shadow: 0 6px 14px rgba(75, 85, 99, 0.35);
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    box-shadow: 0 8px 18px rgba(31, 41, 55, 0.4);
+}
+
+/* پیام‌ها */
+.error {
+    color: #b91c1c;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 8px 10px;
+    background: #fef2f2;
+    border-radius: 10px;
+    border: 1px solid #fecaca;
+}
+
+.success {
+    color: #166534;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 8px 10px;
+    background: #ecfdf5;
+    border-radius: 10px;
+    border: 1px solid #bbf7d0;
+}
+
+/* لیست تاپیک‌ها */
+.topics-list {
+    margin-top: 16px;
+}
+
+.topic-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+/* تاپیک آزاد */
+.topic-free {
+    background: rgba(239, 246, 255, 0.9);
+    border: 1px solid #dbeafe;
+}
+
+.topic-free:hover {
+    background: #eff6ff;
+    transform: translateY(-1px);
+}
+
+/* تاپیک گرفته‌شده (قرمز و قفل) */
+.topic-taken {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-weight: 500;
+}
+
+.topic-taken span {
+    color: #b91c1c;
+}
+
+/* ستون پایین فرم */
+.footer-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* جدول‌ها (ادمین) */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.table th,
+.table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: right;
+}
+
+.table th {
+    background: #eff6ff;
+    font-weight: 600;
+    color: #111827;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+/* برچسب‌ها */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: #e0f2fe;
+    color: #1d4ed8;
+}
+
+/* لینک‌ها */
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* پرینت برای صفحه ادمین */
+@media print {
+    body {
+        background: #ffffff !important;
+    }
+    body::before {
+        display: none;
+    }
+    .wrapper {
+        box-shadow: none;
+        background: #ffffff;
+    }
+    .footer-actions {
+        display: none;
+    }
+}
+/* 🔵 لوگو ثابت در پایین سمت راست همه صفحات */
+.logo-fixed {
+    position: fixed;
+    bottom: 20px;
+    right: 10px;
+    width: 210px; /* اندازه لوگو */
+    opacity: 1; /* کمی محو برای ظرافت */
+    z-index: 9999;
+    pointer-events: none; /* تا کلیک روش اثر نکنه */
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+/* افکت ظاهر شدن نرم */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 0.7; transform: translateY(0); }
+}
