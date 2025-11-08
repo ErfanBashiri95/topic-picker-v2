@@ -5,9 +5,19 @@
 
 <div class="footer-actions">
     <a href="{{ url_for('admin_export_csv') }}" class="btn">📥 دانلود CSV</a>
+
     <button class="btn" style="background:#10b981;" onclick="window.print()">🖨️ چاپ / PDF</button>
-    <a href="{{ url_for('admin_logout') }}" class="btn" style="background:#6b7280;">خروج ادمین</a>
+
+    <form method="post"
+          action="{{ url_for('admin_reset_all') }}"
+          style="display:inline;"
+          onsubmit="return confirm('همه انتخاب‌ها پاک شوند؟ این عمل قابل بازگشت نیست.');">
+        <button type="submit" class="btn btn-secondary">🔄 ریست همه انتخاب‌ها</button>
+    </form>
+
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary">خروج ادمین</a>
 </div>
+
 
 <h3>بر اساس شرکت‌کننده‌ها</h3>
 <table class="table">

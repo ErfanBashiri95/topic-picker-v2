@@ -182,6 +182,23 @@ def admin_dashboard():
         by_user=by_user,
         topics=topics
     )
+    
+    
+@app.route("/admin/reset-all", methods=["POST"])
+def admin_reset_all():
+    if not session.get("is_admin"):
+        return redirect(url_for("admin_login"))
+
+    topics = get_topics()
+
+    # خالی کردن همه انتخاب‌ها
+    for t in topics:
+        t["chosen_by"] = None
+
+    set_topics(topics)
+
+    return redirect(url_for("admin_dashboard"))
+
 
 
 @app.route("/admin/export.csv")
