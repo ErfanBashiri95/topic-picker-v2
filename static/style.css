@@ -26,7 +26,7 @@ body {
 .wrapper {
     max-width: 900px;
     margin: 40px auto;
-    background: rgba(255, 255, 255, 0.98);
+    background: rgba(243, 244, 246, 0.95);
     padding: 24px 28px;
     border-radius: 20px;
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.30);
