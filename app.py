@@ -2,7 +2,23 @@ import os
 import json
 import csv
 import io
-from flask import Flask, render_template, request, redirect, url_for, session, Response
+
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    Response,
+)
+
+# تلاش برای ایمپورت supabase؛ اگر نبود، برنامه لوکال با JSON کار می‌کند
+try:
+    from supabase import create_client, Client
+except ImportError:
+    create_client = None
+    Client = None
 
 app = Flask(__name__)
 app.secret_key = "change-this-to-a-strong-secret"
@@ -14,8 +30,23 @@ USERS_FILE = os.path.join(DATA_DIR, "users.json")
 TOPICS_FILE = os.path.join(DATA_DIR, "topics.json")
 
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "022025" 
+ADMIN_PASSWORD = "022025"
 
+# ---------------- Supabase Config ----------------
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+
+if create_client and SUPABASE_URL and SUPABASE_KEY:
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    USE_SUPABASE = True
+else:
+    supabase = None
+    USE_SUPABASE = False
+
+
+
+# ---------------- Helper functions ----------------
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -32,12 +63,32 @@ def get_users():
 
 
 def get_topics():
-    return load_json(TOPICS_FILE)
+    """
+    اگر Supabase تنظیم شده باشد، از جدول topics می‌خوانیم.
+    در غیر این صورت از فایل topics.json قبلی.
+    """
+    if USE_SUPABASE and supabase:
+        res = supabase.table("topics").select("*").order("id").execute()
+        return res.data or []
+    else:
+        return load_json(TOPICS_FILE)
 
 
 def set_topics(topics):
-    save_json(TOPICS_FILE, topics)
+    """
+    اگر Supabase فعال است، فقط فیلد chosen_by را بر اساس id آپدیت می‌کنیم.
+    در غیر این صورت، در فایل topics.json ذخیره می‌کنیم.
+    """
+    if USE_SUPABASE and supabase:
+        for t in topics:
+            supabase.table("topics").update(
+                {"chosen_by": t.get("chosen_by")}
+            ).eq("id", t["id"]).execute()
+    else:
+        save_json(TOPICS_FILE, topics)
 
+
+# ---------------- Routes ----------------
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -50,7 +101,7 @@ def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
 
-        # ادمین مستقیم نره اینجا
+        # اگر ادمین اینجا یوزرنیم زد، بفرستش به لاگین ادمین
         if username == ADMIN_USERNAME:
             return redirect(url_for("admin_login"))
 
@@ -86,39 +137,43 @@ def topics_page():
         except ValueError:
             selected_ids = []
 
+        # محدودیت حداقل/حداکثر
         if len(selected_ids) < 1:
             error = "حداقل یک سرفصل باید انتخاب کنید."
         elif len(selected_ids) > 2:
             error = "حداکثر می‌توانید دو سرفصل انتخاب کنید."
         else:
-            # آخرین نسخه topics را بخوانیم (برای جلوگیری از تداخل)
+            # آخرین وضعیت topics را بخوانیم
             topics = get_topics()
 
-            # اول همه انتخاب‌های قبلی این کاربر را آزاد کن
+            # آزاد کردن انتخاب‌های قبلی این کاربر که دیگر انتخاب نشده‌اند
             for t in topics:
                 if t.get("chosen_by") == username and t["id"] not in selected_ids:
                     t["chosen_by"] = None
 
-            # حالا تلاش کن انتخاب‌های جدید را ثبت کنی
             conflict = False
+
+            # ثبت انتخاب‌های جدید
             for tid in selected_ids:
                 topic = next((t for t in topics if t["id"] == tid), None)
                 if not topic:
                     continue
-                # اگر قبلاً توسط دیگری گرفته شده
+
+                # اگر توسط شخص دیگری گرفته شده
                 if topic.get("chosen_by") not in (None, username):
                     conflict = True
                     continue
+
                 topic["chosen_by"] = username
 
             set_topics(topics)
 
             if conflict:
-                error = "برخی سرفصل‌ها قبلاً توسط دیگران گرفته شده بودند. لیست را دوباره بررسی کنید."
+                error = "برخی سرفصل‌ها قبلاً توسط دیگران گرفته شده‌اند. لطفاً لیست را دوباره بررسی کنید."
             else:
                 success = "انتخاب‌های شما با موفقیت ذخیره شد."
 
-    # برای نمایش، دوباره بخوان
+    # برای نمایش نهایی
     topics = get_topics()
     return render_template(
         "topics.html",
@@ -136,6 +191,8 @@ def logout():
     return redirect(url_for("login"))
 
 
+# ---------------- Admin ----------------
+
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if session.get("is_admin"):
@@ -145,9 +202,10 @@ def admin_login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
+
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session.clear()
             session["is_admin"] = True
-            session.pop("user", None)
             return redirect(url_for("admin_dashboard"))
         else:
             error = "یوزرنیم یا پسورد ادمین اشتباه است."
@@ -182,8 +240,8 @@ def admin_dashboard():
         by_user=by_user,
         topics=topics
     )
-    
-    
+
+
 @app.route("/admin/reset-all", methods=["POST"])
 def admin_reset_all():
     if not session.get("is_admin"):
@@ -191,14 +249,12 @@ def admin_reset_all():
 
     topics = get_topics()
 
-    # خالی کردن همه انتخاب‌ها
     for t in topics:
         t["chosen_by"] = None
 
     set_topics(topics)
 
     return redirect(url_for("admin_dashboard"))
-
 
 
 @app.route("/admin/export.csv")
